@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="coverflow.css" />
+<!-- <link rel="stylesheet" href="Mystyle.css" /> -->
+<script src="jquery.min.js"></script>
+<script src="sly.min.js"></script>
+<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width" />
+
+
+</head>
+
+<body  style=" background-color: rgba(255, 255, 0, 0.65); padding: 2px;margin: 10px; "  >
+	
+<div class="wrap" id="coverflow1">
+
+	<div class="scrollbar">
+		<div class="handle">
+			<div class="mousearea"></div>
+		</div>
+	</div>
+
+	<div class="frame coverflow">
+		<ul class="clearfix">
+			<li>Holder</li>
+		</ul>
+	</div>
+
+	<ul class="pages"></ul>
+	
+
+</div>
+
+
+
+<div>
+	
+<img align ="right" src= "mainlogo.jpg"><br><br><p><br>
+<hr width= "1000">
+<a href= autobazzar.html>Home</a> | <a href= "aboutus.html">About Us</a> | <a href= "finddealer.html"> Find a Dealer </a> | <hr width= "1000">
+
+<h1> THE KAREN CAR BAZZAR</h1>
+
+
+<div class="dropdown">
+	<span id="nav" >Choose page</span>
+	<div class="dropdown-content">
+		<p>Home</p>
+		<p>About Us</p>
+		<p>Find a Dealer</p>
+	</div>
+  </div>
+
+
+<p>
+<!-- <UL class="navbar">
+<li>Home</li>
+<li>About Us</li>
+<li>Find a Dealer</li>
+</UL> -->
+		<table border ="5">
+			<tr><td><img src="audi4.jpg"></td><td><img src="AUDI.jpg">
+			</td><td><img height="200" width="250" src= "Ford_Taurus_Limited_2_--_10-31-2009.jpg"</td></tr>
+			<tr><td align = center><font type= "comic sans" color = "green">
+			Audi A4 2011 model Price 11500 usd CIF mombasa</font></td>
+			<td><font type= "comic sans" color = "green">Audi R8 coupe 2013 model Price 17000 usd CIF Mombasa</font></td>
+			<td><font type= "comic sans" color = "green">The Dodge Chellenger 1999 model price 15000 usd CIF mombasa</font></td></tr>
+			<tr><td><img src= "MUSTANG.jpg"></td><td><img src= "bmw.jpg"></td><td><img src="LAMBOGINI.jpg"></td></tr>
+			<tr><td>The Ford Mustang 500 price 18340 usd CIF Mombasa</td>
+			<td>The BMW M3 Convertible 2009 model price 20110 usd CIF Mombasa </td>
+			<td>Lambigini Matador 2009 model Price 23400 usd CIF Mombasa</td></tr>
+		</table>
+<p>
+	<span class="offices" >our offices are at the juction towards Hardy Police Station </span>
+
+
+</div>
+
+<script type= text/JavaScript>
+document.getElementsByTagName('html')[0].className += ' ' +
+	("ActiveXObject" in window? 'ie' : 'no-ie')
+
+
+function coverflowimages(options){
+	if ( !document.getElementById('coverflowoverlay') ){
+		var $overlay = $('<div id="coverflowoverlay" />').appendTo(document.body)
+		var $enlargearea = $('<div id="coverenlargearea" />').appendTo(document.body)
+	}
+	else{
+		var $overlay = $('#coverflowoverlay')
+		var $enlargearea = $('#coverenlargearea')
+	}
+	var $body = $(document.body)
+	var $overlayenlarge = $overlay.add($enlargearea)
+	var $wrap  = $('#' + options.coverid)
+	var $frame = $wrap.find('div.frame:eq(0)')
+	var frameinnerHTML = ''
+	var activeitem = -1
+	var onselecteditemclick = options.onselecteditemclick || selecteditemaction
+
+	var preloadimages = []
+	for (var i = 0; i<options.images.length; i++){
+		if (options.images[i][1]){
+			if (options.preloadlarge){
+				preloadimages[i] = new Image()
+				preloadimages[i].src = options.images[i][1]
+			}
+		}
+		frameinnerHTML += '<li style="background-image:url(' + options.images[i][0] + ')" data-itemindex="' + i +'"></li>\n'
+	}
+	$frame.find('ul:eq(0)').html( frameinnerHTML )
+
+	function selecteditemaction(e, activeitem){ // default call back function for onselecteditemclick, showing enlarged image
+		$overlay.css({opacity:.9, zIndex: 1000})
+		$enlargearea.html('<img src="' + options.images[activeitem][1] + '"/>' + 
+			((options.images[activeitem][2])? '<div id="desc">' + options.images[activeitem][2] +'</div>': '')
+		)
+
+		var maxheight = $(window).height()
+		$enlargearea.css({opacity:1, zIndex: 1001})
+		.data('isvisible', true)
+		.find('img:eq(0)')
+			.css({maxWidth: $(window).width() * .95, maxHeight: $(window).height()})
+		e.stopPropagation()
+
+	}
+	
+	// Call Sly on frame. See https://github.com/darsain/sly/blob/master/docs/Options.md
+	$frame.sly({
+		horizontal: 1,
+		itemNav: 'forceCentered',
+		smart: 1,
+		activateMiddle: 1,
+		activateOn: 'click',
+		mouseDragging: 1,
+		touchDragging: 1,
+		releaseSwing: 1,
+		startAt: 1,
+		scrollBar: $wrap.find('.scrollbar'),
+		scrollBy: 1,
+		speed: 300,
+		elasticBounds: 1,
+		easing: 'swing',
+		dragHandle: 1,
+		dynamicHandle: 1,
+		clickBar: 1,
+		// Navigation buttons
+		pagesBar: $wrap.find('.pages'),
+		activatePageOn: 'click'
+	})
+
+
+	$(window).on('resize', function(){
+		$frame.sly("reload");
+	})
+
+	$frame.on('mousedown', function(e){ // test during 'mousedown' phase if distination LI is active item, before 'onclick'
+		if (  $(e.target).hasClass('active') ){
+			activeitem = $(e.target).data('itemindex')
+		}
+	})
+
+	$frame.on('click', function(e){ // onclick the main cover flow container
+		var $target = $(e.target)
+		if (  $(e.target).data('itemindex') == activeitem ){
+			onselecteditemclick(e, activeitem)
+		}
+	})
+
+	$overlayenlarge.unbind().on('click', function(){
+		if ( $enlargearea.data('isvisible') ){
+			$overlayenlarge.css({opacity:0, zIndex:-1})
+			$enlargearea.data('isvisible', false)
+		}
+	})
+
+}
+
+///////// Initialization code ////////////////
+
+coverflowimages({
+	coverid: 'coverflow1',
+	images: [
+						['aston.jpg', 'aston.jpg', 'Aston Martin James Bond Favourite European Car'],
+						['audi4.jpg', 'audi4.jpg', 'Europeans most popular Muscle Car'],
+						['new/1.jpeg', 'new/1.jpeg', 'Europeans most popular Muscle Car'],
+						['new/2.jpeg', 'new/2.jpeg', 'Europeans most popular Muscle Car'],
+						['new/3.jpeg', 'new/3.jpeg', 'Europeans most popular Muscle Car'],
+						['new/4.jpeg', 'new/4.jpeg', 'Europeans most popular Muscle Car'],
+						
+						['bmw.jpg', 'bmw.jpg'],
+						['LAMBOGINI.jpg', 'LAMBOGINI.jpg', 'Italian Muscle Car'],
+						['AUDI.jpg', 'AUDI.jpg', 'all tiem Favorite'] // <-- no comma after last image
+					] // <-- no comma after last option
+})
+
+</script>
+
+	<li>Find a Dealer</li> 
+	</UL> 
+	<table border ="5"> 
+	<tr><td><img src="AUDI.jpg"></td><td><img src="AUDI.jpg"> 
+
+	</td><td><img src= "LAMBOGINI.jpg"</td></tr> 
+
+	<tr><td align = center><font type= "comic sans" color = "green"> 
+	Audi A4 2011 model Price 11500 usd CIF mombasa</font></td> 
+	<td><font type= "comic sans" color = "green">Audi R8 coupe 2013 model Price 17000 usd CIF Mombasa</font></td> 
+	<td><font type= "comic sans" color = "green">The Dodge Chellenger 1999 model price 15000 usd CIF mombasa</font></td></tr> 
+	<tr><td><img src= "MUSTANG.jpg"></td><td><img src= "bmw.jpg"></td><td><img src="LAMBOGINI.jpg"></td></tr> 
+
+	<tr><td>The Ford Mustang 500 price 18340 usd CIF Mombasa</td> 
+	<td>The BMW M3 Convertible 2009 model price 20110 usd CIF Mombasa </td> 
+	<td>Lambigini Matador 2009 model Price 23400 usd CIF Mombasa</td></tr> 
+	</table> 
+	<p> 
+	
+	<span class="offices" >our offices are at the juction towards Hardy Police Station </span>
+	</div> 
+
+</body>
+</html>
+	
